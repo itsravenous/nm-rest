@@ -1,5 +1,7 @@
 var restify = require('restify'),
-	connectionManager = require('node-nm-vpn');
+	connectionManager = require('node-nm-vpn'),
+	util = require('util'),
+	config = require('./config.json');
 
 var server = restify.createServer({
 	name: 'nm-vpn-rest',
@@ -18,7 +20,7 @@ var injectLinksIntoConnection = function(connection) {
 	connection._links = [
 		{
 			rel: 'self',
-			href: '/connections/'  + connection.id
+			href: util.format('%s://%s:%s/connections/%s', config.secure ? 'https' : 'http', config.host, config.port, connection.id)
 		}
 	];
 
@@ -66,7 +68,7 @@ server.put('/connections/:id', function (req, res, next) {
 	}
 });
 
-server.listen(8080, function () {
+server.listen(config.port, function () {
 	console.log('%s listening at %s', server.name, server.url);
 });
 

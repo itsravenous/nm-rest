@@ -1,0 +1,5 @@
+{
+	"secure": true,
+	"host": "raspberrypi",
+	"port": 3000
+}
