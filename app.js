@@ -25,24 +25,6 @@ var injectLinksIntoConnection = function(connection) {
 	return connection;
 };
 
-/**
- * Gets a connection given a UUID
- * @param {String} id Connection UUID
- * @return {Connection|null}
- */
-var getConnectionById = function(id) {
-	var connections = connectionManager.connections,
-		connection = connections.filter(function (con) {
-			return con.id === id;
-		}).pop();
-
-	if (connection) {
-		connection = injectLinksIntoConnection(connection);
-	}
-
-	return connection ? connection : null;
-};
-
 server.get('/connections', function (req, res, next) {
 	res.send(connectionManager.connections.map(function (connection) {
 		return injectLinksIntoConnection(connection);
@@ -51,22 +33,35 @@ server.get('/connections', function (req, res, next) {
 });
 
 server.get('/connections/:id', function (req, res, next) {
-	res.send(getConnectionById(req.params.id));
+	var connection = connectionManager.getById(req.params.id);
+	if (connection) {
+		res.send(injectLinksIntoConnection(connection));
+	} else {
+		res.status(404);
+		res.send(null);
+	}
 });
 
 server.put('/connections/:id', function (req, res, next) {
-	var connection = getConnectionById(req.params.id);
+	var connection = connectionManager.getById(req.params.id);
 
-	if (connection) {
-		if (req.body.state === 'up') {
+	if (connection && typeof req.body.up !== 'undefined') {
+		if (req.body.up) {
+			// Drop active connection first
+			if (connectionManager.active) connectionManager.down(connectionManager.active.id);
+			// Bring up requested connection
 			connectionManager.up(connection.id);
-			res.send(connection);
-		} else if (req.body.state === 'down') {
-			connectionManager.down(connection.id);
+			// Get the new state
+			connection = connectionManager.getById(connection.id);
+			// Send it back down
 			res.send(connection);
 		} else {
-			res.status(400);
-			res.send(new Error('Invalid connection state: ' + req.body.state));
+			// Drop the connection
+			connectionManager.down(connection.id);
+			// Get the new state
+			connection = connectionManager.getById(connection.id);
+			// Send it back down
+			res.send(connection);
 		}
 	}
 });
