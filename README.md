@@ -1,2 +1,2 @@
 # nm-rest
-REST API for nm-cli
+REST API frontend to [node-nm-vpn](https://github.com/itsravenous/node-nm-vpn)
