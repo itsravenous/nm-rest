@@ -1,5 +1,5 @@
 {
-  "name": "nm-rest",
+  "name": "nm-vpn-rest",
   "version": "0.1.1",
   "description": "REST API frontend to node-nm-vpn",
   "main": "app.js",
