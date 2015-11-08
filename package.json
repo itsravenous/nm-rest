@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/itsravenous/nm-vpn-rest#readme",
   "dependencies": {
+    "cors": "^2.7.1",
     "nm-vpn": "^0.1.4",
     "restify": "^4.0.3"
   }

@@ -1,4 +1,5 @@
 var restify = require('restify'),
+	cors = require('cors');
 	connectionManager = require('nm-vpn'),
 	util = require('util'),
 	config = require('./config.json');
@@ -10,6 +11,12 @@ var server = restify.createServer({
 server.use(restify.acceptParser(server.acceptable));
 server.use(restify.queryParser());
 server.use(restify.bodyParser());
+server.use(cors({
+	origin: function(origin, callback) {
+		var originIsWhitelisted = config.allowedClients.indexOf(origin) !== -1;
+		callback(null, originIsWhitelisted);
+	}
+}));
 
 /**
  * Adds links to a connection object
