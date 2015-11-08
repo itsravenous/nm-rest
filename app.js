@@ -1,5 +1,5 @@
 var restify = require('restify'),
-	connectionManager = require('node-nm-vpn'),
+	connectionManager = require('nm-vpn'),
 	util = require('util'),
 	config = require('./config.json');
 
