@@ -56,11 +56,9 @@ server.put('/connections/:id', function (req, res, next) {
 
 	if (connection && typeof req.body.up !== 'undefined') {
 		if (req.body.up) {
-			// Drop active connection first
-			if (connectionManager.active) connectionManager.down(connectionManager.active.id);
-			// Bring up requested connection
-			connectionManager.up(connection.id);
-			// Get the new state
+			// Set requested connection as active
+			connectionManager.setActive(connection);
+			// Get the connection's new state
 			connection = connectionManager.getById(connection.id);
 			// Send it back down
 			res.send(connection);
@@ -78,4 +76,3 @@ server.put('/connections/:id', function (req, res, next) {
 server.listen(config.port, function () {
 	console.log('%s listening at %s', server.name, server.url);
 });
-
